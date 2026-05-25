@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wedding Invitation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        /* CSS Variables for Floral Theme Colors */
+        :root {
+            --primary-bg: #faf7f2;
+            --text-color: #4a4e4d;
+            --floral-green: #8a9a5b;
+            --dusty-rose: #d4b5b0;
+            --envelope-color: #f4eee1;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Playfair Display', serif;
+            background-color: var(--primary-bg);
+            color: var(--text-color);
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* --- Envelope Animation Section --- */
+        #envelope-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(135deg, #eaddc5, #f4eee1);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 1s ease, visibility 1s ease;
+        }
+
+        .envelope-wrapper {
+            position: relative;
+            cursor: pointer;
+            width: 300px;
+            height: 200px;
+            background-color: var(--dusty-rose);
+            border-radius: 5px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.4s ease;
+        }
+
+        .envelope-wrapper:hover {
+            transform: translateY(-5px);
+        }
+
+        .flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 150px solid transparent;
+            border-right: 150px solid transparent;
+            border-top: 100px solid var(--envelope-color);
+            transform-origin: top;
+            transition: transform 0.8s ease;
+            z-index: 3;
+        }
+
+        .pocket {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 150px solid #ede5d3;
+            border-right: 150px solid #ede5d3;
+            border-bottom: 100px solid #e3d9c6;
+            z-index: 2;
+        }
+
+        .instruction-text {
+            margin-top: 40px;
+            font-style: italic;
+            color: #666;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+
+        /* Classes applied via JavaScript */
+        .envelope-wrapper.open .flap {
+            transform: rotateX(180deg);
+        }
+        #envelope-screen.fade-out {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        /* --- Main Website Content --- */
+        #main-content {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 1.5s ease 0.5s;
+        }
+        
+        #main-content.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Great Vibes', cursive;
+            font-weight: normal;
+            color: var(--floral-green);
+        }
+
+        /* Landing Page */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            /* Replace the URL below with your floral background image */
+            background: url('https://images.unsplash.com/photo-1518895949257-7621c3c786d7?q=80&w=2000&auto=format&fit=crop') center/cover no-repeat;
+            position: relative;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(250, 247, 242, 0.7); /* Light overlay to make text readable */
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            padding: 20px;
+        }
+
+        .hero h1 {
+            font-size: 5rem;
+            margin: 0;
+            color: var(--text-color);
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+            margin-top: 10px;
+            color: var(--dusty-rose);
+        }
+
+        /* Quotes & Love Letter Section */
+        .love-letter-section {
+            max-width: 800px;
+            margin: 80px auto;
+            padding: 0 20px;
+            text-align: center;
+        }
+
+        .quote {
+            font-size: 1.8rem;
+            font-style: italic;
+            color: var(--floral-green);
+            margin-bottom: 40px;
+        }
+
+        .love-letter-text {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            text-align: left;
+            padding: 40px;
+            background-color: #fff;
+            border: 1px solid var(--envelope-color);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+        }
+
+        /* Photo Album Section */
+        .album-section {
+            padding: 60px 20px;
+            background-color: #fff;
+            text-align: center;
+        }
+
+        .album-section h2 {
+            font-size: 3.5rem;
+            margin-bottom: 40px;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .gallery img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+        }
+
+        .gallery img:hover {
+            transform: scale(1.03);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 80px 20px;
+            background-color: var(--primary-bg);
+        }
+
+        .footer h2 {
+            font-size: 4rem;
+            color: var(--dusty-rose);
+            margin: 0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 3.5rem; }
+            .quote { font-size: 1.4rem; }
+            .footer h2 { font-size: 3rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="bg-music" loop>
+        <source src="wedding-music.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <div id="envelope-screen">
+        <div class="envelope-wrapper" id="envelope" onclick="openEnvelope()">
+            <div class="flap"></div>
+            <div class="pocket"></div>
+        </div>
+        <p class="instruction-text">Click the envelope to open</p>
+    </div>
+
+    <div id="main-content">
+        
+        <header class="hero">
+            <div class="hero-content">
+                <h1>Name & Name</h1>
+                <p>WE ARE GETTING MARRIED</p>
+            </div>
+        </header>
+
+        <section class="love-letter-section">
+            <div class="quote">
+                "Whatever our souls are made of, his and mine are the same."
+            </div>
+            <div class="love-letter-text">
+                <p>Dearest Friends and Family,</p>
+                <p>Welcome to our wedding space. From our very first date to this incredible moment, our journey together has been the greatest adventure of our lives. We have dreamed of the day we would say "I do," and we cannot imagine doing it without the love and support of our favorite people.</p>
+                <p>This is where our two paths beautifully merge into one. Thank you for being part of our story.</p>
+                <p style="text-align: right; font-family: 'Great Vibes', cursive; font-size: 2rem; margin-top: 20px;">
+                    With all our love,<br>Name & Name
+                </p>
+            </div>
+        </section>
+
+        <section class="album-section">
+            <h2>Our Favorite Memories</h2>
+            <div class="gallery">
+                <img src="photo1.jpg" alt="Couple Photo 1">
+                <img src="photo2.jpg" alt="Couple Photo 2">
+                <img src="photo3.jpg" alt="Couple Photo 3">
+            </div>
+        </section>
+
+        <footer class="footer">
+            <h2>My forever after</h2>
+        </footer>
+
+    </div>
+
+    <script>
+        function openEnvelope() {
+            const envelope = document.getElementById('envelope');
+            const envelopeScreen = document.getElementById('envelope-screen');
+            const mainContent = document.getElementById('main-content');
+            const music = document.getElementById('bg-music');
+
+            // 1. Animate the envelope flap opening
+            envelope.classList.add('open');
+
+            // 2. Play the background music
+            music.play().catch(error => {
+                console.log("Audio autoplay was prevented by the browser.");
+            });
+
+            // 3. Fade out the envelope screen and reveal the main site
+            setTimeout(() => {
+                envelopeScreen.classList.add('fade-out');
+                
+                setTimeout(() => {
+                    envelopeScreen.style.display = 'none';
+                    mainContent.classList.add('visible');
+                    // Automatically scroll to the top of the newly visible content
+                    window.scrollTo(0, 0); 
+                }, 1000); // Wait for the fade-out transition to finish
+
+            }, 1200); // Wait for the flap to visually open before fading
+        }
+    </script>
+</body>
+</html>
